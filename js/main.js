@@ -33,7 +33,7 @@ addEventListener("resize", size); size();
 
 // ===== background music (mp3, loops) =====
 // put your song at assets/music/bg.mp3
-const bgm = new Audio("assets/music/bg.mpeg");
+const bgm = new Audio("assets/music/bg.mp3");
 bgm.loop = true; bgm.volume = 0.5;
 let playing = false;
 function music(on){
@@ -42,18 +42,28 @@ function music(on){
 }
 $("music").onclick = () => music(!playing);
 
-// ===== loader: "Show me" needs the camera (his reaction is recorded) =====
-const NEED_CAM = !location.search.includes("nocam");   // TEST ONLY: open index.html?nocam to skip the camera
+// ===== loader: "Show me" + camera (his reaction is recorded) =====
+// CAM_MODE: "required" = he MUST allow the camera to enter
+//           "optional" = it asks, but he can still enter if he blocks / has no camera
+//           "off"      = no camera at all
+const CAM_MODE = "required";
+const NEED_CAM = CAM_MODE !== "off" && !location.search.includes("nocam");   // ?nocam = skip camera while testing
+if (CAM_MODE === "off") $("camMsg").style.display = "none";
+let entering = false;
 $("enter").onclick = async () => {
+  if (entering) return;
   music(true);   // must start inside the tap, phones need this
   if (NEED_CAM) {
+    entering = true;
     const b = $("enter"), msg = $("camMsg");
     b.disabled = true; b.textContent = "Allow the camera…";
-    const ok = window.REC ? await REC.start() : false;
-    b.disabled = false; b.textContent = "Show me";
-    if (!ok) {
+    let ok = false;
+    try { ok = window.REC ? await REC.start() : false; } catch (e) { ok = false; }
+    b.disabled = false; b.textContent = "Show me"; entering = false;
+    if (!ok && CAM_MODE === "required") {
       msg.style.opacity = 1; msg.style.color = "#ffb3c6";
-      msg.textContent = "I need your camera for this one. Tap the camera or lock icon in the address bar, choose Allow, then tap Show me again 🤍";
+      msg.textContent = "I need your camera for this one. Tap the camera or lock icon in the address bar, choose Allow, then tap Show me again 🤍" +
+        (location.search.includes("test") && window.REC ? "  [" + REC.error() + "]" : "");
       return;
     }
   }

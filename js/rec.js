@@ -1,42 +1,62 @@
 // Reaction recorder: starts when he taps "Show me", stops on the final screen.
-// The browser ALWAYS asks camera permission first. If he taps Block, the website still works normally.
+// The browser ALWAYS asks camera permission first.
 window.REC = (function () {
-  // ===== EDIT HERE (Cloudinary free account > Settings > Upload > add UNSIGNED preset) =====
- const CLOUD = "dab12xyz";              // un Cloudinary "Cloud name"
-const PRESET = "birthday_unsigned";    // nee create panna preset peru
-  // e.g. "birthday_unsigned"
-  // =======================================================================================
-  let rec, stream, chunks = [], state = "idle", mime = "", dot;
+  // ===== EDIT HERE (Cloudinary: Cloud name + UNSIGNED upload preset name) =====
+  const CLOUD = "";    // e.g. "dxxxxxxx"
+  const PRESET = "";   // e.g. "birthday_unsigned"
+  // ===========================================================================
+  let rec, stream, chunks = [], state = "idle", mime = "", dot, lastErr = "";
+
+  const gum = c => navigator.mediaDevices.getUserMedia(c);
 
   async function start() {
-    if (state !== "idle" || !navigator.mediaDevices || !window.MediaRecorder) return false;
+    if (state === "rec") return true;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { lastErr = "NoMediaDevices (needs https + Chrome/Safari)"; return false; }
+    if (!window.MediaRecorder) { lastErr = "NoMediaRecorder"; return false; }
     state = "asking";
     try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }, audio: true
-      });
-    } catch (e) { state = "off"; return false; }
-    mime = ["video/webm;codecs=vp9,opus", "video/webm", "video/mp4"].find(t => MediaRecorder.isTypeSupported(t)) || "";
-    try {
-      rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 600000 } : undefined);
-    } catch (e) { state = "off"; stream.getTracks().forEach(t => t.stop()); return false; }
-    rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
-    rec.start(1000);
-    state = "rec";
-    dot = document.createElement("div");
-    dot.textContent = "● REC";
-    dot.style.cssText = "position:fixed;top:10px;left:12px;z-index:60;font:600 11px sans-serif;letter-spacing:1px;color:#ff6b8a;opacity:.7;pointer-events:none";
-    document.body.appendChild(dot);
-    return true;
+      // 1) camera + mic, 2) if that fails for a non-permission reason, camera only
+      try {
+        stream = await gum({ video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } }, audio: true });
+      } catch (e1) {
+        if (e1 && (e1.name === "NotAllowedError" || e1.name === "SecurityError")) throw e1;
+        stream = await gum({ video: true });
+      }
+      const types = ["video/webm;codecs=vp9,opus", "video/webm", "video/mp4"];
+      mime = types.find(t => MediaRecorder.isTypeSupported(t)) || "";
+      try {
+        rec = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 600000 } : undefined);
+      } catch (e2) {
+        rec = new MediaRecorder(stream);
+        mime = rec.mimeType || "";
+      }
+      chunks = [];
+      rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+      rec.start(1000);
+      state = "rec";
+      if (!dot) {
+        dot = document.createElement("div");
+        dot.textContent = "● REC";
+        dot.style.cssText = "position:fixed;top:10px;left:12px;z-index:60;font:600 11px sans-serif;letter-spacing:1px;color:#ff6b8a;opacity:.7;pointer-events:none";
+        document.body.appendChild(dot);
+      }
+      return true;
+    } catch (e) {
+      lastErr = (e && e.name) ? e.name + (e.message ? ": " + e.message : "") : String(e);
+      try { if (stream) stream.getTracks().forEach(t => t.stop()); } catch (_) {}
+      state = "idle";   // IMPORTANT: lets him try again
+      return false;
+    }
   }
 
   const active = () => state === "rec";
+  const error = () => lastErr;
 
   function stop() {
     return new Promise(res => {
       if (state !== "rec") return res(null);
       rec.onstop = () => {
-        stream.getTracks().forEach(t => t.stop());
+        try { stream.getTracks().forEach(t => t.stop()); } catch (_) {}
         state = "done"; if (dot) dot.remove();
         res(new Blob(chunks, { type: mime || "video/webm" }));
       };
@@ -63,5 +83,5 @@ const PRESET = "birthday_unsigned";    // nee create panna preset peru
     return "downloaded";
   }
 
-  return { start, stop, send, active };
+  return { start, stop, send, active, error };
 })();
