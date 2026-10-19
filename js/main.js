@@ -48,16 +48,24 @@ $("music").onclick = () => music(!playing);
 //           "off"      = no camera at all
 // ===== Enter experience without camera =====
 
-$("enter").onclick = async () => {
-  music(true);
+// ===== Enter experience without camera =====
+const enterButton = $("enter");
 
-  $("loader").classList.add("out");
-  $("main").hidden = false;
+if (enterButton) {
+  enterButton.onclick = () => {
+    music(true);
 
-  setTimeout(() => {
-    $("loader").style.display = "none";
-  }, 1300);
-};
+    const loader = $("loader");
+    const main = $("main");
+
+    if (loader) loader.classList.add("out");
+    if (main) main.hidden = false;
+
+    setTimeout(() => {
+      if (loader) loader.style.display = "none";
+    }, 1300);
+  };
+}
 $("enter").onclick = async () => {
   if (entering) return;
   music(true);   // must start inside the tap, phones need this
