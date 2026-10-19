@@ -42,15 +42,12 @@ function music(on){
 }
 $("music").onclick = () => music(!playing);
 
-// ===== loader: "Show me" + camera (his reaction is recorded) =====
-// CAM_MODE: "required" = he MUST allow the camera to enter
-//           "optional" = it asks, but he can still enter if he blocks / has no camera
-//           "off"      = no camera at all
+// ===== loader: "Show me" button (no camera) =====
 const enterButton = $("enter");
 
 if (enterButton) {
   enterButton.onclick = () => {
-    music(true);
+    music(true);   // must start inside the tap, phones need this
     const loader = $("loader");
     const main = $("main");
     if (loader) loader.classList.add("out");
@@ -60,26 +57,6 @@ if (enterButton) {
     }, 1300);
   };
 }
-$("enter").onclick = async () => {
-  if (entering) return;
-  music(true);   // must start inside the tap, phones need this
-  if (NEED_CAM) {
-    entering = true;
-    const b = $("enter"), msg = $("camMsg");
-    b.disabled = true; b.textContent = "Allow the camera…";
-    let ok = false;
-    try { ok = window.REC ? await REC.start() : false; } catch (e) { ok = false; }
-    b.disabled = false; b.textContent = "Show me"; entering = false;
-    if (!ok && CAM_MODE === "required") {
-      msg.style.opacity = 1; msg.style.color = "#ffb3c6";
-      msg.textContent = "I need your camera for this one. Tap the camera or lock icon in the address bar, choose Allow, then tap Show me again 🤍" +
-        (location.search.includes("test") && window.REC ? "  [" + REC.error() + "]" : "");
-      return;
-    }
-  }
-  $("loader").classList.add("out"); $("main").hidden = false;
-  setTimeout(() => $("loader").style.display = "none", 1300);
-};
 
 // ===== map =====
 const unlocked = i => i === 0 || done.includes(i-1);
