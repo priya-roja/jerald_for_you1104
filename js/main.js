@@ -46,21 +46,15 @@ $("music").onclick = () => music(!playing);
 // CAM_MODE: "required" = he MUST allow the camera to enter
 //           "optional" = it asks, but he can still enter if he blocks / has no camera
 //           "off"      = no camera at all
-// ===== Enter experience without camera =====
-
-// ===== Enter experience without camera =====
 const enterButton = $("enter");
 
 if (enterButton) {
   enterButton.onclick = () => {
     music(true);
-
     const loader = $("loader");
     const main = $("main");
-
     if (loader) loader.classList.add("out");
     if (main) main.hidden = false;
-
     setTimeout(() => {
       if (loader) loader.style.display = "none";
     }, 1300);
