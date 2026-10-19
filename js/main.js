@@ -46,10 +46,18 @@ $("music").onclick = () => music(!playing);
 // CAM_MODE: "required" = he MUST allow the camera to enter
 //           "optional" = it asks, but he can still enter if he blocks / has no camera
 //           "off"      = no camera at all
-const CAM_MODE = "required";
-const NEED_CAM = CAM_MODE !== "off" && !location.search.includes("nocam");   // ?nocam = skip camera while testing
-if (CAM_MODE === "off") $("camMsg").style.display = "none";
-let entering = false;
+// ===== Enter experience without camera =====
+
+$("enter").onclick = async () => {
+  music(true);
+
+  $("loader").classList.add("out");
+  $("main").hidden = false;
+
+  setTimeout(() => {
+    $("loader").style.display = "none";
+  }, 1300);
+};
 $("enter").onclick = async () => {
   if (entering) return;
   music(true);   // must start inside the tap, phones need this
