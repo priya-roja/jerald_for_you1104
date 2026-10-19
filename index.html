@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A World Made For You</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500&display=block" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="sky"></canvas>
+
+<div id="loader">
+  <i class="lan" style="--x:8%;--s:.9;--d:-2s;--t:15s"></i>
+  <i class="lan" style="--x:22%;--s:.6;--d:-9s;--t:18s"></i>
+  <i class="lan" style="--x:38%;--s:1.1;--d:-5s;--t:16s"></i>
+  <i class="lan" style="--x:55%;--s:.7;--d:-12s;--t:19s"></i>
+  <i class="lan" style="--x:70%;--s:1;--d:-7s;--t:14s"></i>
+  <i class="lan" style="--x:84%;--s:.65;--d:-3s;--t:17s"></i>
+  <i class="lan" style="--x:92%;--s:.85;--d:-10s;--t:20s"></i>
+  <p id="ln1" class="intro-line"></p>
+  <button id="enter">Show me</button>
+  <p class="rec-note" id="camMsg">📷 I want to see your reaction 🥺 Please allow the camera, it records your reaction for me.</p>
+</div>
+
+<div id="fx"></div>
+<div class="screen" id="main" hidden>
+  <button id="music" aria-label="Music">🎵</button>
+  <header>
+    <h2 class="serif" id="title"></h2>
+    <p>Seven doors. One surprise behind each.</p>
+    <div id="hearts"></div>
+    <div id="count"></div>
+  </header>
+  <div id="path"></div>
+</div>
+
+<div id="panel"><div id="sheet"></div></div>
+<div id="stage"></div>
+
+<script src="js/fx.js"></script>
+<script src="js/ch1.js"></script>
+<script src="js/ch2.js"></script>
+<script src="js/ch3.js"></script>
+<script src="js/ch4.js"></script>
+<script src="js/ch5.js"></script>
+<script src="js/ch6.js"></script>
+<script src="js/ch7.js"></script>
+<script src="js/rec.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
