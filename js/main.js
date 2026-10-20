@@ -1,6 +1,6 @@
 // ===== CONFIG: இங்க மட்டும் மாத்தினா போதும் =====
 const CONFIG = {
-  name: "Jeraldu",            // partner
+  name: "Jerald",            // partner
   fullName: "Jerald Stephen",
   from: "Priya Roja",         // you
   birthday: "2002-10-20",
@@ -33,7 +33,7 @@ addEventListener("resize", size); size();
 
 // ===== background music (mp3, loops) =====
 // put your song at assets/music/bg.mp3
-const bgm = new Audio("assets/music/bg.mp3");
+const bgm = new Audio("assets/music/bg.mpeg");
 bgm.loop = true; bgm.volume = 0.5;
 let playing = false;
 function music(on){
