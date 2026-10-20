@@ -55,7 +55,7 @@ RUN[0] = function (stage, finish, close) {
   }
 
   function answer(n) {
-    if (n === 4) return correct();
+    if (n === 6) return correct();
     const s = get(), m = box.querySelector("#m"), g = box.querySelector(".gate");
     g.classList.add("rattle"); setTimeout(() => g.classList.remove("rattle"), 500);
     box.querySelectorAll(".opt").forEach(b => b.disabled = true);
@@ -100,10 +100,10 @@ RUN[0] = function (stage, finish, close) {
     box.querySelector("#ok").onclick = finish;
   }
   function correct() {
-    openGate("The gate is open", "Four times, and every one was special. Come in, " + CONFIG.name + ".");
+    openGate("The gate is open", "six times, and every one was special. Come in, " + CONFIG.name + ".");
   }
   function walkIn() {
-    openGate("Okay, I will let you in anyway 🤍", "It was four times, by the way. Come in, " + CONFIG.name + ".");
+    openGate("Okay, I will let you in anyway 🤍", "It was six times, by the way. Come in, " + CONFIG.name + ".");
   }
   intro();
 };
